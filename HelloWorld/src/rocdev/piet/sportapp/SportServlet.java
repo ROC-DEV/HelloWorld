@@ -24,10 +24,16 @@ public class SportServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		admin = new Administratie();
 		
+		//open nieuw lid invoer venster
+		if (req.getParameter("open_nieuw_lid") != null) {
+			RequestDispatcher disp = req.getRequestDispatcher("/piet/sport/invoerlid.jsp");
+			disp.forward(req, resp);
+		}
+		
 		//voeg een nieuw lid toe
-		if (req.getParameter("knop_nieuw_lid") != null) {
+		else if (req.getParameter("knop_nieuw_lid") != null) {
 			this.voegNieuwLidToe(req);
-			resp.sendRedirect("/sport");
+			resp.sendRedirect("/piet/sport");
 		}
 		//verwijder een lid. Param verwijder_lid = definitief
 		else if (req.getParameter("verwijder_lid") != null || req.getParameter("lid_verwijder") != null) {
@@ -37,8 +43,14 @@ public class SportServlet extends HttpServlet {
 		else if (req.getParameter("wijzig_lid") != null || req.getParameter("lid_wijzig") != null) {
 			this.wijzigLid(req, resp);
 		}
+		
+		//open nieuw team invoer venster
+		else if (req.getParameter("open_nieuw_team") != null) {
+			RequestDispatcher disp = req.getRequestDispatcher("/piet/sport/invoerteam.jsp");
+			disp.forward(req, resp);
+		}
 		//voeg nieuw team toe
-		else if (req.getParameter("nieuw_team") != null) {
+		else if (req.getParameter("knop_nieuw_team") != null) {
 			this.voegNieuwTeamToe(req, resp);
 		}
 		//verwijder team Param verwijder_team = definitief
@@ -69,7 +81,7 @@ public class SportServlet extends HttpServlet {
 		//geen params, ga naar overzicht leden en teams pagina
 		else {
 			req.setAttribute("admin", admin);
-			RequestDispatcher disp = req.getRequestDispatcher("/ledenTeams.jsp");
+			RequestDispatcher disp = req.getRequestDispatcher("/piet/sport/ledenTeams.jsp");
 			disp.forward(req, resp);
 		}
 	}
@@ -105,7 +117,7 @@ public class SportServlet extends HttpServlet {
 		//ga naar bevestigingspagina
 		if (req.getParameter("lid_verwijder") != null) {
 			req.setAttribute("lid", lid);
-			RequestDispatcher disp = getServletContext().getRequestDispatcher("/verwijderlid.jsp");
+			RequestDispatcher disp = getServletContext().getRequestDispatcher("/piet/sport/verwijderlid.jsp");
 			disp.forward(req, resp);
 		}
 		
@@ -116,7 +128,7 @@ public class SportServlet extends HttpServlet {
 				admin.verwijderTeamspeler(team, lid);
 			}
 			admin.verwijderLid(lid);
-			resp.sendRedirect("/sport");
+			resp.sendRedirect("/piet/sport");
 		}
 	}
 	
@@ -135,13 +147,13 @@ public class SportServlet extends HttpServlet {
 			lid.setGeboortedatum(req.getParameter("geboortedatum"));
 			lid.setGeslacht(req.getParameter("geslacht"));
 			admin.wijzigLid(lid);
-			resp.sendRedirect("/sport");
+			resp.sendRedirect("/piet/sport");
 		}
 		//ga naar invoerscherm wijzigLid.jsp
 		else {
 			Lid lid = admin.getLid(req.getParameter("spelerscode"));
 			req.setAttribute("lid", lid);
-			RequestDispatcher disp = req.getRequestDispatcher("/wijziglid.jsp");
+			RequestDispatcher disp = req.getRequestDispatcher("/piet/sport/wijziglid.jsp");
 			disp.forward(req, resp);
 		}
 	}
@@ -153,7 +165,7 @@ public class SportServlet extends HttpServlet {
 		Team team = new Team(teamcode, teamomschrijving);
 		admin.voegTeamToe(team);
 		
-		resp.sendRedirect("/sport");
+		resp.sendRedirect("/piet/sport");
 	}
 	
 	//verwijdert een team na bevestiging
@@ -162,7 +174,7 @@ public class SportServlet extends HttpServlet {
 		//leid naar bevestiging
 		if (req.getParameter("team_verwijder") != null) {
 			req.setAttribute("team", team);
-			RequestDispatcher disp = req.getRequestDispatcher("/verwijderteam.jsp");
+			RequestDispatcher disp = req.getRequestDispatcher("/piet/sport/verwijderteam.jsp");
 			try {
 				disp.forward(req, resp);
 			}
@@ -178,7 +190,7 @@ public class SportServlet extends HttpServlet {
 				admin.verwijderTeamspeler(team, lid);
 			}
 			admin.verwijderTeam(team);
-			resp.sendRedirect("/sport");
+			resp.sendRedirect("/piet/sport");
 		}
 	}
 	
@@ -188,7 +200,7 @@ public class SportServlet extends HttpServlet {
 		//ga naar wijzigteam.jsp
 		if (req.getParameter("team_wijzig") != null) {
 			req.setAttribute("team", team);
-			RequestDispatcher disp = req.getRequestDispatcher("/wijzigteam.jsp");
+			RequestDispatcher disp = req.getRequestDispatcher("/piet/sport/wijzigteam.jsp");
 			disp.forward(req, resp);
 		}
 		
@@ -196,7 +208,7 @@ public class SportServlet extends HttpServlet {
 		else {
 			team.setOmschrijving(req.getParameter("teamomschrijving"));
 			admin.wijzigTeam(team);
-			resp.sendRedirect("/sport");
+			resp.sendRedirect("/piet/sport");
 		}
 	}
 	
@@ -212,7 +224,7 @@ public class SportServlet extends HttpServlet {
 		req.setAttribute("isLeeg", isLeeg);
 		req.setAttribute("teams", teamsLid);
 		req.setAttribute("lid", lid);
-		RequestDispatcher disp = req.getRequestDispatcher("/teamslid.jsp");
+		RequestDispatcher disp = req.getRequestDispatcher("/piet/sport/teamslid.jsp");
 		disp.forward(req, resp);
 	}
 	
@@ -227,7 +239,7 @@ public class SportServlet extends HttpServlet {
 		//maak lijst van niet-teamleden
 		ArrayList<Lid> nietTeamleden = admin.getNietTeamspelers(team);
 		req.setAttribute("niet_teamleden", nietTeamleden);
-		RequestDispatcher disp = req.getRequestDispatcher("/ledenvanteam.jsp");
+		RequestDispatcher disp = req.getRequestDispatcher("/piet/sport/ledenvanteam.jsp");
 		disp.forward(req, resp);
 	}
 	
@@ -236,7 +248,7 @@ public class SportServlet extends HttpServlet {
 		Lid lid = admin.getLid(req.getParameter("spelerscode"));
 		Team team = admin.getTeam(req.getParameter("teamcode"));
 		admin.setTeamspeler(team, lid);
-		resp.sendRedirect("/sport?teamcode=" + team.getTeamcode() + "&leden_van_team=" );	
+		resp.sendRedirect("/piet/sport?teamcode=" + team.getTeamcode() + "&leden_van_team=" );	
 	}
 	
 	//verwijder een speler uit een team Blijf in zelfde scherm
@@ -244,6 +256,6 @@ public class SportServlet extends HttpServlet {
 		Lid lid = admin.getLid(req.getParameter("spelerscode"));
 		Team team = admin.getTeam(req.getParameter("teamcode"));
 		admin.verwijderTeamspeler(team, lid);
-		resp.sendRedirect("/sport?teamcode=" + team.getTeamcode()+ "&leden_van_team=" );
+		resp.sendRedirect("/piet/sport?teamcode=" + team.getTeamcode()+ "&leden_van_team=" );
 	}
 }
